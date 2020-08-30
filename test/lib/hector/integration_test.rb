@@ -66,7 +66,7 @@ module Hector
       sent_data = block ? capture_sent_data(connection, &block) : connection.sent_data
       assert sent_data =~ /^#{line.is_a?(Regexp) ? line : Regexp.escape(line)}/, explain_sent_to(line, sent_data)
     end
-    
+
     def explain_sent_to(line, sent_data)
       [].tap do |lines|
         lines.push("Expected to receive #{line.inspect}, but did not receive it:")
@@ -78,13 +78,13 @@ module Hector
       sent_data = block ? capture_sent_data(connection, &block) : connection.sent_data
       assert sent_data !~ /^#{line.is_a?(Regexp) ? line : Regexp.escape(line)}/, explain_not_sent_to(line, sent_data)
     end
-    
+
     def explain_not_sent_to(line, sent_data)
       sent_data = sent_data.split(/[\r\n]+/).map do |sent_line|
         sent_line !~ /^#{line.is_a?(Regexp) ? line : Regexp.escape(line)}/ ? "  #{sent_line.inspect}" : "* #{sent_line.inspect}"
       end
       line_number = sent_data.index { |line| line[0, 2] == "* " }
-      
+
       [].tap do |lines|
         lines.push("Expected not to receive #{line.inspect}, but received it on line #{line_number}:")
         lines.concat(sent_data)
@@ -110,6 +110,10 @@ module Hector
 
     def assert_cannot_send_to_channel(connection, channel)
       assert_sent_to connection, ":hector.irc 404 #{channel} :"
+    end
+
+    def assert_erroneous_encoding(connection)
+      assert_sent_to connection, ":hector.irc 400 :Please use UTF-8"
     end
 
     def assert_erroneous_nickname(connection, nickname = connection_nickname(connection))

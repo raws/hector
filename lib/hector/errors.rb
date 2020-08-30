@@ -21,6 +21,7 @@ module Hector
     end
   end
 
+  class ErroneousEncoding   < IrcError("400", :text => "Please use UTF-8", :fatal => true); end
   class NoSuchNickOrChannel < IrcError("401", :text => "No such nick/channel"); end
   class NoSuchChannel       < IrcError("403", :text => "No such channel"); end
   class CannotSendToChannel < IrcError("404", :text => "Cannot send to channel"); end

@@ -4,6 +4,19 @@ require "test_helper"
 
 module Hector
   class ConnectionTest < IntegrationTest
+    test :"sending a message with an invalid encoding should respond with a 400" do
+      message_with_invalid_encoding = "NICK invalid🤪".force_encoding("ASCII-8BIT")
+
+      connection.tap do |c|
+        pass! c
+        user! c
+        c.receive_line message_with_invalid_encoding
+
+        assert_erroneous_encoding c
+        assert_closed c
+      end
+    end
+
     test :"connecting without specifying a password shouldn't create a session" do
       connection.tap do |c|
         user! c

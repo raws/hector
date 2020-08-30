@@ -17,6 +17,8 @@ module Hector
     end
 
     def receive_line(line)
+      transcode!(line)
+
       @request = Request.new(line)
       log(:debug, "received", @request.to_s.inspect) unless @request.sensitive?
 
@@ -86,6 +88,14 @@ module Hector
     private
       def buffer
         @buffer ||= BufferedTokenizer.new(LINE_SEPARATOR)
+      end
+
+      def transcode!(line)
+        line.encode!('UTF-8')
+
+      rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError
+        raise ErroneousEncoding
+
       end
   end
 
