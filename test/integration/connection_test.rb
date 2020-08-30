@@ -32,37 +32,37 @@ module Hector
         assert_not_closed c
       end
     end
-    
+
     test :"sending a concatenated username and password with PASS should create a session" do
       connection.tap do |c|
         pass! c, "sam:secret"
         user! c
         nick! c
-        
+
         assert_not_nil c.session
         assert_welcomed c
         assert_not_closed c
       end
     end
-    
+
     test :"sending a username and password with PASS should create a session even if USER credentials are incorrect" do
       connection.tap do |c|
         pass! c, "sam:secret"
         user! c, "invalid"
         nick! c
-        
+
         assert_not_nil c.session
         assert_welcomed c
         assert_not_closed c
       end
     end
-    
+
     test :"sending an invalid concatenated username and password with PASS should respond with a 464" do
       connection.tap do |c|
         pass! c, "sam:invalid"
         user! c
         nick! c
-        
+
         assert_nil c.session
         assert_invalid_password c
         assert_closed c
@@ -77,12 +77,12 @@ module Hector
         assert_closed c
       end
     end
-    
+
     test :"sending CAP before registration should be ignored" do
       connection.tap do |c|
         c.receive_line "CAP LS"
         assert_not_closed c
-        
+
         pass! c
         user! c
         nick! c
@@ -162,18 +162,6 @@ module Hector
         assert_sent_to c, ":joe NICK jöe"
       end
     end
-    
-    test :"changing to a new nickname coerces it to UTF-8" do
-      authenticated_connection("sam").tap do |c|
-        c.receive_line "NICK säm".force_encoding("ASCII-8BIT")
-        c.receive_line "NICK lée".force_encoding("ASCII-8BIT")
-        c.receive_line "NICK røss".force_encoding("ASCII-8BIT")
-        
-        assert_sent_to c, ":sam NICK säm"
-        assert_sent_to c, ":säm NICK lée"
-        assert_sent_to c, ":lée NICK røss"
-      end
-    end if String.method_defined?(:force_encoding)
 
     test :"changing to an invalid nickname should respond with 432" do
       authenticated_connection("sam").tap do |c|

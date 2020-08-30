@@ -28,7 +28,6 @@ module Hector
       end
 
       def normalize(name)
-        name.force_encoding("UTF-8") if name.respond_to?(:force_encoding)
         if name =~ /^[#&+!][#&+!\-\w\p{L}\p{M}\p{N}\p{S}\p{P}\p{Co}]{1,49}$/u && name !~ /,/
           name.downcase
         else

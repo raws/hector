@@ -26,7 +26,7 @@ module Hector
     def initialize(command, *args)
       @command = command.to_s.upcase
       @args = args
-      
+
       options = args.pop if args.last.is_a?(Hash)
       @text = options[:text] if options
       @source = options[:source] if options
@@ -43,8 +43,6 @@ module Hector
         line.push(command)
         line.concat(args)
         line.push(":#{text}") if text
-      end.map do |arg|
-        if arg.respond_to?(:force_encoding) then arg.force_encoding("UTF-8") else arg end
       end.join(" ")[0, 510] + "\r\n"
     end
   end
