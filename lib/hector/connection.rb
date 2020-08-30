@@ -91,11 +91,8 @@ module Hector
       end
 
       def transcode!(line)
-        line.encode!('UTF-8')
-
-      rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError
-        raise ErroneousEncoding
-
+        line.force_encoding('UTF-8')
+        raise ErroneousEncoding unless line.valid_encoding?
       end
   end
 
