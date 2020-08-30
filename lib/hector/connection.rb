@@ -34,7 +34,7 @@ module Hector
       handle_error(e)
 
     rescue Exception => e
-      log(:error, [e, *e.backtrace].join("\n"))
+      log(:error, ["#{e.class}: #{e.message}", *e.backtrace].join("\n"))
 
     ensure
       @request = nil
