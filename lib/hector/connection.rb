@@ -1,11 +1,19 @@
 module Hector
-  class Connection < EventMachine::Protocols::LineAndTextProtocol
+  class Connection < EventMachine::Connection
+    LINE_SEPARATOR = "\r\n".freeze
+
     include Concerns::Authentication
 
     attr_reader :session, :request, :identity
 
     def post_init
       log(:info, "opened connection")
+    end
+
+    def receive_data(data)
+      buffer.extract(data).each do |line|
+        receive_line(line)
+      end
     end
 
     def receive_line(line)
@@ -73,6 +81,11 @@ module Hector
         "[#{address}:#{port}]".tap do |tag|
           tag << " (#{session.nickname})" if session
         end
+      end
+
+    private
+      def buffer
+        @buffer ||= BufferedTokenizer.new(LINE_SEPARATOR)
       end
   end
 
